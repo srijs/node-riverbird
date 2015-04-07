@@ -1,0 +1,21 @@
+{
+  "name": "riverbird",
+  "version": "0.0.0",
+  "description": "Controlled Streams for Bluebird",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha *-spec.js"
+  },
+  "author": "Sam Rijs",
+  "license": "MIT",
+  "devDependencies": {
+    "bluebird": "^2.9.24",
+    "mocha": "^2.2.1"
+  },
+  "peerDependencies": {
+    "bluebird": "^2.9.24"
+  },
+  "dependencies": {
+    "bytes": "^1.0.0"
+  }
+}
