@@ -6,6 +6,16 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha *-spec.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:srijs/node-riverbird.git"
+  },
+  "keywords": {
+    "stream",
+    "control",
+    "bluebird",
+    "promise"
+  },
   "author": "Sam Rijs",
   "license": "MIT",
   "devDependencies": {
