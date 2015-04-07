@@ -29,18 +29,19 @@ Head.prototype.seek = function (n) {
   if (n < 0) {
     return Promise.reject('cannot seek backwards');
   }
-  var len = 0;
-  if (this._chunk.data) {
-    len = this._chunk.data.length;
+  if (n === 0) {
+    return Promise.resolve(this);
   }
-  if (this._offset + n <= len) {
-    return Promise.resolve(new Head(this._chunk, this._offset + n));
+  var off = this._offset;
+  var len = this._chunk.data.length;
+  if (off + n < this._chunk.data.length) {
+    return Promise.resolve(new Head(this._chunk, off + n));
   }
   if (!this._chunk.hasNext()) {
     return Promise.resolve(null);
   }
   return this._chunk.next(function (chunk) {
-    return new Head(chunk).seek(n - (len - this._offset));
+    return new Head(chunk).seek(n - (len - off));
   }.bind(this));
 };
 
@@ -57,19 +58,18 @@ Head.prototype.read = function (n) {
 };
 
 Head.prototype._read = function (n, bufs) {
-  var len = 0;
-  if (this._chunk.data) {
-    var buf = this._chunk.data.slice(this._offset, this._offset + n);
-    len = buf.length;
+  var buf = this._chunk.data.slice(this._offset, this._offset + n);
+  var len = buf.length;
+  if (len > 0) {
     bufs.push(buf);
   }
   if (len < n) {
-    return this.seek(len).then(function (head) {
-      if (head) {
+    if (this._chunk.hasNext()) {
+      return this._chunk.next(function (chunk) {
+        var head = new Head(chunk);
         return head._read(n - len, bufs);
-      }
-      return Promise.resolve(bufs);
-    });
+      });
+    }
   }
   return Promise.resolve(bufs);
 };

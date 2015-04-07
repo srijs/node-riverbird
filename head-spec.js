@@ -82,6 +82,18 @@ describe('Head', function () {
         assert.equal(buf.toString(), 'bc');
       }).done(done);
     });
+
+    it('reads bytes across two chunks after a seek', function (done) {
+      var s = new stream.PassThrough();
+      var c = new Chunk('abc', s);
+      new Head(c).seek(1).then(function (head) {
+        return head.read(4);
+      }).then(function (buf) {
+        assert.equal(buf.toString(), 'bcde');
+      }).done(done);
+      s.end('def');
+    });
+
   });
 
 });

@@ -9,7 +9,15 @@ var Promise = require('bluebird');
  */
 var Chunk = module.exports = function (data, stream) {
 
-  this.data = data;
+  this.data = new Buffer(0);
+
+  if (Buffer.isBuffer(data)) {
+    this.data = data;
+  }
+
+  if (typeof data === 'string') {
+    this.data = new Buffer(data);
+  }
 
   if (stream) {
 
@@ -25,8 +33,8 @@ var Chunk = module.exports = function (data, stream) {
       stream.on('data', function (data) {
         resolve(new Chunk(data, stream));
       });
-      stream.on('end', function (data) {
-        resolve(new Chunk(data));
+      stream.on('end', function () {
+        resolve(new Chunk());
       });
     });
 
