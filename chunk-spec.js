@@ -221,6 +221,12 @@ describe('Chunk', function () {
 
   describe('nextAvailable', function () {
 
+    it('returns null before data is available', function () {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      assert.equal(c.nextAvailable(), null);
+    });
+
     it('returns data after data is available', function (done) {
       var s = new stream.PassThrough();
       var c = new Chunk(null, s);
@@ -229,6 +235,16 @@ describe('Chunk', function () {
         assert.equal(c.nextAvailable(), chunk);
       }).done(done);
     });
+
+    it('throws after a stream error', function () {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      s.emit('error', new Error('MEH!'));
+      assert.throws(function () {
+        c.nextAvailable();
+      });
+    });
+
 
   });
 

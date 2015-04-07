@@ -53,10 +53,9 @@ Chunk.prototype.hasNext = function () {
 
 /**
  * Reads the next chunk in the stream.
- * You should check for `hasNext` before calling this.
  * @param {Function} onSuccess - the handler to call on success
  * @param {Function} onFailure - the handler to call on failure
- * @returns {Promise} - a promise, resolved on success, rejected on failure
+ * @returns {?Promise} A promise if the end of the stream has not been reached, null otherwise.
  */
 Chunk.prototype.next = function (onSuccess, onFailure) {
   // Switch chunk from present to past,
@@ -66,7 +65,7 @@ Chunk.prototype.next = function (onSuccess, onFailure) {
     this._stream = null;
     stream.resume();
   }
-  return this._next.then(onSuccess, onFailure);
+  return this._next && this._next.then(onSuccess, onFailure);
 };
 
 /**
@@ -74,14 +73,21 @@ Chunk.prototype.next = function (onSuccess, onFailure) {
  * @returns {boolean}
  */
 Chunk.prototype.hasNextAvailable = function () {
-  return this._next && this._next.isFulfilled();
+  return !!this._next && !this._next.isPending();
 };
 
 /**
  * Reads the next chunk which is available for synchronous reading.
- * You should check for `hasNextAvailable` before calling this.
- * @returns {Chunk}
+ * @throws An error if reading the next chunk yielded an error.
+ * @returns {?Chunk}
  */
 Chunk.prototype.nextAvailable = function () {
-  return this._next.value();
+  if (this._next) {
+    if (this._next.isFulfilled()) {
+      return this._next.value();
+    }
+    if (this._next.isRejected()) {
+      throw this._next.reason();
+    }
+  }
 };
