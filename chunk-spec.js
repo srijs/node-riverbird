@@ -191,4 +191,45 @@ describe('Chunk', function () {
 
   });
 
+  describe('hasNextAvailable', function () {
+
+    it('returns false before data is available', function () {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      assert(!c.hasNextAvailable());
+    });
+
+    it('returns true after data is available', function (done) {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      s.end('abc');
+      c.next(function () {
+        assert(c.hasNextAvailable());
+      }).done(done);
+    });
+
+    it('returns false after all data has been read', function (done) {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      s.end();
+      c.next(function (chunk) {
+        assert(!chunk.hasNextAvailable());
+      }).done(done);
+    });
+
+  });
+
+  describe('nextAvailable', function () {
+
+    it('returns data after data is available', function (done) {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      s.end('abc');
+      c.next(function (chunk) {
+        assert.equal(c.nextAvailable(), chunk);
+      }).done(done);
+    });
+
+  });
+
 });

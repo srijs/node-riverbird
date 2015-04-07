@@ -44,7 +44,8 @@ var Chunk = module.exports = function (data, stream) {
 
 /**
  * Checks whether there are more chunks to read.
- * @returns {boolean} - false if end of stream
+ * If not, the end of the stream is reached.
+ * @returns {boolean}
  */
 Chunk.prototype.hasNext = function () {
   return !!this._next;
@@ -52,6 +53,7 @@ Chunk.prototype.hasNext = function () {
 
 /**
  * Reads the next chunk in the stream.
+ * You should check for `hasNext` before calling this.
  * @param {Function} onSuccess - the handler to call on success
  * @param {Function} onFailure - the handler to call on failure
  * @returns {Promise} - a promise, resolved on success, rejected on failure
@@ -65,4 +67,21 @@ Chunk.prototype.next = function (onSuccess, onFailure) {
     stream.resume();
   }
   return this._next.then(onSuccess, onFailure);
+};
+
+/**
+ * Checks whether the next chunk is available for synchronous reading.
+ * @returns {boolean}
+ */
+Chunk.prototype.hasNextAvailable = function () {
+  return this._next && this._next.isFulfilled();
+};
+
+/**
+ * Reads the next chunk which is available for synchronous reading.
+ * You should check for `hasNextAvailable` before calling this.
+ * @returns {Chunk}
+ */
+Chunk.prototype.nextAvailable = function () {
+  return this._next.value();
 };
