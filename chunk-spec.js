@@ -7,6 +7,32 @@ var Chunk = require('./chunk');
 
 describe('Chunk', function () {
 
+  describe('hasNext', function () {
+
+    it('returns true before data is available', function () {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      assert(c.hasNext());
+    });
+
+    it('returns true after data is available', function () {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      s.end('abc');
+      assert(c.hasNext());
+    });
+
+    it('returns false after all data has been read', function (done) {
+      var s = new stream.PassThrough();
+      var c = new Chunk(null, s);
+      s.end();
+      c.next(function (chunk) {
+        assert(!chunk.hasNext());
+      }).done(done);
+    });
+
+  });
+
   describe('next', function () {
 
     describe('error', function () {
