@@ -10,12 +10,12 @@
     "type": "git",
     "url": "git@github.com:srijs/node-riverbird.git"
   },
-  "keywords": {
+  "keywords": [
     "stream",
     "control",
     "bluebird",
     "promise"
-  },
+  ],
   "author": "Sam Rijs",
   "license": "MIT",
   "devDependencies": {
