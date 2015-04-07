@@ -53,8 +53,8 @@ Chunk.prototype.hasNext = function () {
 
 /**
  * Reads the next chunk in the stream.
- * @param {Function} onSuccess - the handler to call on success
- * @param {Function} onFailure - the handler to call on failure
+ * @param {Function} [onSuccess] - the handler to call on success
+ * @param {Function} [onFailure] - the handler to call on failure
  * @returns {?Promise} A promise if the end of the stream has not been reached, null otherwise.
  */
 Chunk.prototype.next = function (onSuccess, onFailure) {
